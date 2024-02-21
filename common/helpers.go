@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     https://www.apache.org/licenses/LICENSE-2.0
+//	https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,17 +17,22 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-    "strings"
+	"strings"
 )
 
 // NormalizePath:
-//   replace trailing slashes with "/index.html";
-//   remove leading slashes.
+//
+//	replace trailing slashes with "/index.html";
+//	remove leading slashes.
 func NormalizePath(path string) (object string) {
-    if strings.HasSuffix(path, "/") {
-        path = path + "index.html"
-    }
-    return strings.TrimLeft(path, "/")
+	if strings.HasSuffix(path, "/") {
+		path = path + "index.html"
+	}
+
+	//TODO: CONFIGURIZE THE PREFIX AND CHANGE THE PREFIX
+	prefix := "121/"
+	result := prefix + strings.TrimLeft(path, "/")
+	return result
 }
 
 func GetRuntimeProjectId() (string, error) {

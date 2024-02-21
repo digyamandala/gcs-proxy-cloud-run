@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     https://www.apache.org/licenses/LICENSE-2.0
+//	https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -28,8 +28,9 @@ func Setup() error {
 
 // GET will be called in main.go for GET requests
 func GET(ctx context.Context, output http.ResponseWriter, input *http.Request) {
-	gcs.Read(ctx, output, input, LoggingOnly)
+	//gcs.Read(ctx, output, input, LoggingOnly)
 	//gcs.ReadWithCache(ctx, output, input, CacheMedia, cacheGetter, LoggingOnly)
+	gcs.ReadWithSignatureURL(ctx, output, input, LoggingOnly)
 }
 
 // HEAD will be called in main.go for HEAD requests

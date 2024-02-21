@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     https://www.apache.org/licenses/LICENSE-2.0
+//	https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,16 +15,15 @@ package gcs
 
 import (
 	"bytes"
+	storage "cloud.google.com/go/storage"
 	"context"
 	"fmt"
-	"io"
-	"net/http"
-
 	"github.com/DomZippilli/gcs-proxy-cloud-function/common"
 	"github.com/DomZippilli/gcs-proxy-cloud-function/filter"
-
-	storage "cloud.google.com/go/storage"
 	"github.com/rs/zerolog/log"
+	"io"
+	"net/http"
+	"time"
 )
 
 // Read returns objects from a GCS bucket, mapping the URL to object names.
@@ -35,6 +34,24 @@ func Read(ctx context.Context, response http.ResponseWriter,
 		return nil, false
 	}
 	ReadWithCache(ctx, response, request, pipeline, noCache, filter.Pipeline{})
+}
+
+func ReadWithSignatureURL(ctx context.Context, response http.ResponseWriter,
+	request *http.Request, pipeline filter.Pipeline) {
+	objectName := common.NormalizePath(request.URL.Path)
+	// GENERATE SIGNED_URL
+	opts := &storage.SignedURLOptions{
+		Scheme:  storage.SigningSchemeV4,
+		Method:  "GET",
+		Expires: time.Now().Add(15 * time.Minute),
+	}
+	url, signedErr := gcs.Bucket(bucket).SignedURL(objectName, opts)
+	if signedErr != nil {
+		log.Error().Msgf("Bucket(%q).SignedURL: %w", bucket, signedErr)
+	}
+	log.Info().Msgf("bucket: %q; signed_url: %q", bucket, url)
+	log.Info().Msgf("redirecting to: %q", url)
+	http.Redirect(response, request, url, http.StatusMovedPermanently)
 }
 
 // CacheGet defines how CachedGet will try to get media from the cache.
