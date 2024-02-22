@@ -15,15 +15,16 @@ package gcs
 
 import (
 	"bytes"
-	storage "cloud.google.com/go/storage"
 	"context"
 	"fmt"
-	"github.com/DomZippilli/gcs-proxy-cloud-function/common"
-	"github.com/DomZippilli/gcs-proxy-cloud-function/filter"
-	"github.com/rs/zerolog/log"
 	"io"
 	"net/http"
 	"time"
+
+	storage "cloud.google.com/go/storage"
+	"github.com/DomZippilli/gcs-proxy-cloud-function/common"
+	"github.com/DomZippilli/gcs-proxy-cloud-function/filter"
+	"github.com/rs/zerolog/log"
 )
 
 // Read returns objects from a GCS bucket, mapping the URL to object names.
@@ -39,11 +40,10 @@ func Read(ctx context.Context, response http.ResponseWriter,
 func ReadWithSignatureURL(ctx context.Context, response http.ResponseWriter,
 	request *http.Request, pipeline filter.Pipeline) {
 	objectName := common.NormalizePath(request.URL.Path)
-	// GENERATE SIGNED_URL
 	opts := &storage.SignedURLOptions{
 		Scheme:  storage.SigningSchemeV4,
 		Method:  "GET",
-		Expires: time.Now().Add(15 * time.Minute),
+		Expires: time.Now().Add(24 * 6 * time.Hour),
 	}
 	url, signedErr := gcs.Bucket(bucket).SignedURL(objectName, opts)
 	if signedErr != nil {

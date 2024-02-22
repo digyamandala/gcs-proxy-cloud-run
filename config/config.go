@@ -16,6 +16,7 @@ package config
 import (
 	"context"
 	"net/http"
+	"strings"
 
 	"github.com/DomZippilli/gcs-proxy-cloud-function/backends/gcs"
 	"github.com/DomZippilli/gcs-proxy-cloud-function/backends/proxy"
@@ -28,9 +29,12 @@ func Setup() error {
 
 // GET will be called in main.go for GET requests
 func GET(ctx context.Context, output http.ResponseWriter, input *http.Request) {
-	//gcs.Read(ctx, output, input, LoggingOnly)
+	if strings.Contains(input.URL.Path, "public") {
+		gcs.Read(ctx, output, input, LoggingOnly)
+	} else {
+		gcs.ReadWithSignatureURL(ctx, output, input, LoggingOnly)
+	}
 	//gcs.ReadWithCache(ctx, output, input, CacheMedia, cacheGetter, LoggingOnly)
-	gcs.ReadWithSignatureURL(ctx, output, input, LoggingOnly)
 }
 
 // HEAD will be called in main.go for HEAD requests
