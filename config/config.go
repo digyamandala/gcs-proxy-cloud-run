@@ -43,6 +43,9 @@ func HEAD(ctx context.Context, output http.ResponseWriter, input *http.Request) 
 }
 
 // func POST
+func POST(ctx context.Context, output http.ResponseWriter, input *http.Request) {
+	gcs.UploadFile(ctx, output, input, LoggingOnly)
+}
 
 // func DELETE
 
