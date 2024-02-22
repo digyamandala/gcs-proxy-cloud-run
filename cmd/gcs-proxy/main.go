@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     https://www.apache.org/licenses/LICENSE-2.0
+//	https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +17,11 @@ import (
 	"context"
 	"net/http"
 	"os"
+
+	uploaderclient "github.com/DomZippilli/gcs-proxy-cloud-function/backends/clients/uploader-client"
+	"github.com/DomZippilli/gcs-proxy-cloud-function/cmd/domain/file"
+	"github.com/DomZippilli/gcs-proxy-cloud-function/cmd/server"
+	"github.com/go-chi/chi/v5"
 
 	"github.com/DomZippilli/gcs-proxy-cloud-function/config"
 	"github.com/rs/zerolog/log"
@@ -40,11 +45,20 @@ func main() {
 	if err := config.Setup(); err != nil {
 		log.Fatal().Msgf("main setup: %v", err)
 	}
-
+	uploaderClient, err := uploaderclient.NewClient("https://upload.eproc.dev", nil)
+	fileSvc := file.NewService(uploaderClient)
+	fileHandler := file.NewHandler(fileSvc)
+	router := chi.NewRouter()
+	http2server := &http2.Server{}
+	h2cHandler := h2c.NewHandler(handler, http2server)
+	server.SetupRouter(router, server.Handler{FileHandler: fileHandler, H2cHandler: h2cHandler})
+	if err != nil {
+		log.Fatal().Msgf("main: %v", err)
+	}
 	// Start HTTP server.
 	log.Printf("listening on port %s", port)
-	http2server := &http2.Server{}
-	if err := http.ListenAndServe(":"+port, h2c.NewHandler(handler, http2server)); err != nil {
+
+	if err := http.ListenAndServe(":"+port, router); err != nil {
 		log.Fatal().Msgf("main: %v", err)
 	}
 }
