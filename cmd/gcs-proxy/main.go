@@ -67,3 +67,4 @@ func ProxyHTTPGCS(output http.ResponseWriter, input *http.Request) {
 }
 
 // test non commit non commit
+// test non commit reset
