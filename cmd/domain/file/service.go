@@ -68,7 +68,7 @@ func (ths *service) UploadFile(ctx context.Context, input FileUploadReq) (string
 		}
 		uploadURL = append(uploadURL, resp...)
 	}
-	fmt.Println(uploadURL)
+
 	fileID, err := ths.uploaderClient.VerifyAndDecodeToken(uploadURL[0].JWTToken)
 	if err != nil {
 		return "", tracerr.Wrap(err)
