@@ -16,5 +16,5 @@ type Handler struct {
 func SetupRouter(r *chi.Mux, handler Handler) {
 	middlewares := alice.New()
 	r.Method(http.MethodPost, "/upload", middlewares.ThenFunc(handler.FileHandler.UploadFile))
-	r.Method(http.MethodGet, "/", handler.H2cHandler)
+	r.Method(http.MethodGet, "/*", handler.H2cHandler)
 }
