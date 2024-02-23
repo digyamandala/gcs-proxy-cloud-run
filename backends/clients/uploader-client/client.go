@@ -218,7 +218,6 @@ func (c *client) UploadFile(reqID string, file interface{}, signedUrl string) er
 
 func (c *client) getJwkSet() (jwk.Set, error) {
 	url := fmt.Sprintf("%s/.well-known/jwks", c.baseURL)
-	fmt.Println(url)
 	resp, err := c.restyClient.R().
 		Get(url)
 	if err != nil {
@@ -236,8 +235,6 @@ func (c *client) getJwkSet() (jwk.Set, error) {
 		err = apierror.WithDesc(errorModel.Errors[0].Code, errorModel.Errors[0].Message)
 		return nil, tracerr.Wrap(err)
 	}
-
-	fmt.Println(json.Marshal(resp.Body()))
 	jwkSet, err := jwk.Parse(resp.Body())
 	if err != nil {
 		return nil, tracerr.Wrap(err)
