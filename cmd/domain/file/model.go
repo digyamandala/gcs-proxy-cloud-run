@@ -16,7 +16,7 @@ type FileUploadReq struct {
 }
 
 var VALIDATION_IMAGE_METADATA = map[string]uploaderclient.ImageMetadata{
-	IMAGE: {MinSize: 1, MaxSize: 40000000, MinWidth: 300, MaxWidth: 2048, MinHeight: 300, MaxHeight: 2048},
+	IMAGE: {MinSize: 1, MaxSize: 40000000, MinWidth: 1, MaxWidth: 2048, MinHeight: 1, MaxHeight: 2048},
 }
 
 var VALIDATION_VIDEO_METADATA = map[string]uploaderclient.VideoMetadata{
