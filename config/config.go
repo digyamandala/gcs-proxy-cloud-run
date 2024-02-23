@@ -20,6 +20,7 @@ import (
 
 	"github.com/DomZippilli/gcs-proxy-cloud-function/backends/gcs"
 	"github.com/DomZippilli/gcs-proxy-cloud-function/backends/proxy"
+	"github.com/rs/zerolog/log"
 )
 
 // Setup will be called once at the start of the program.
@@ -29,6 +30,7 @@ func Setup() error {
 
 // GET will be called in main.go for GET requests
 func GET(ctx context.Context, output http.ResponseWriter, input *http.Request) {
+	log.Info().Msgf("GET triggered with path: %q", input.URL.Path)
 	if strings.Contains(input.URL.Path, "public") {
 		gcs.Read(ctx, output, input, LoggingOnly)
 	} else {
