@@ -29,15 +29,18 @@ var VALIDATION_DOCUMENT_METADATA = map[string]uploaderclient.DocumentMetadata{
 }
 
 type UploadSignedUrlReq struct {
-	ContentType  string `json:"contentType" validate:"required,oneof=application/vnd.openxmlformats-officedocument.spreadsheetml.sheet image/jpg image/jpeg image/png video/mp4 video/mov application/pdf"`
-	Identifier   string `json:"identifier"`
-	FileName     string `json:"fileName"`
-	IsPublic     bool   `json:"isPublic"`
-	DocumentByte []byte `json:"documentByte"`
+	ContentType string `json:"contentType" validate:"required,oneof=application/vnd.openxmlformats-officedocument.spreadsheetml.sheet image/jpg image/jpeg image/png video/mp4 video/mov application/pdf"`
+	Identifier  string `json:"identifier"`
+	FileName    string `json:"fileName"`
+	IsPublic    bool   `json:"isPublic"`
+}
+type UploadSignedUrlRes struct {
+	SignedURL string `json:"signedUrl"`
+	JWTToken  string `json:"jwtToken"`
 }
 
 type VerifyAndDecodeTokenReq struct {
-	Token string
+	Token string `json:"token"`
 }
 
 type RequestDownloadUrlReq struct {

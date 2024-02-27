@@ -1,9 +1,7 @@
 package file
 
 import (
-	"database/sql"
 	"encoding/json"
-	"errors"
 	"net/http"
 
 	"github.com/DomZippilli/gcs-proxy-cloud-function/backends/shared-libs/go/apierror"
@@ -15,6 +13,7 @@ import (
 type Handler interface {
 	UploadFile(w http.ResponseWriter, req *http.Request)
 	DownloadFile(w http.ResponseWriter, req *http.Request)
+	VerifyAndDecodeToken(w http.ResponseWriter, req *http.Request)
 }
 
 type handler struct {
@@ -38,10 +37,25 @@ func (ths *handler) UploadFile(w http.ResponseWriter, req *http.Request) {
 	res, err := ths.svc.UploadFile(req.Context(), input)
 
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			respond.Error(w, req.Context(), apierror.WithDesc(apierror.CodeEntityNotFound, "Category or Product not found"), http.StatusNotFound)
-			return
-		}
+		logger.Warn(req.Context(), "%v", err)
+		respond.Error(w, req.Context(), apierror.WithDesc(apierror.CodeInternalServerError, "Internal Server Error"), http.StatusBadRequest)
+		return
+	}
+	respond.Success(w, res, http.StatusOK)
+}
+func (ths *handler) VerifyAndDecodeToken(w http.ResponseWriter, req *http.Request) {
+	var input VerifyAndDecodeTokenReq
+	err := json.NewDecoder(req.Body).Decode(&input)
+	if err != nil {
+		logger.Warn(req.Context(), "%v", err)
+		respond.Error(w, req.Context(), apierror.WithDesc(apierror.CodeInvalidRequest, "Invalid request"), http.StatusBadRequest)
+		return
+	}
+	res, err := ths.svc.VerifyAndDecodeToken(req.Context(), input)
+
+	if err != nil {
+		logger.Warn(req.Context(), "%v", err)
+		respond.Error(w, req.Context(), apierror.WithDesc(apierror.CodeInternalServerError, "Internal Server Error"), http.StatusBadRequest)
 		return
 	}
 	respond.Success(w, res, http.StatusOK)
@@ -56,10 +70,8 @@ func (ths *handler) DownloadFile(w http.ResponseWriter, req *http.Request) {
 	res, err := ths.svc.DownloadFile(req.Context(), id)
 
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			respond.Error(w, req.Context(), apierror.WithDesc(apierror.CodeEntityNotFound, "Category or Product not found"), http.StatusNotFound)
-			return
-		}
+		logger.Warn(req.Context(), "%v", err)
+		respond.Error(w, req.Context(), apierror.WithDesc(apierror.CodeInternalServerError, "Internal Server Error"), http.StatusBadRequest)
 		return
 	}
 	respond.Success(w, res, http.StatusOK)

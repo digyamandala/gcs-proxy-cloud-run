@@ -1,8 +1,10 @@
 package file
 
 import (
+	"bufio"
 	"context"
 	"errors"
+	"os"
 
 	uploaderclient "github.com/DomZippilli/gcs-proxy-cloud-function/backends/clients/uploader-client"
 	"github.com/DomZippilli/gcs-proxy-cloud-function/backends/shared-libs/go/commonutils"
@@ -10,8 +12,9 @@ import (
 )
 
 type Service interface {
-	UploadFile(ctx context.Context, input FileUploadReq) (string, error)
+	UploadFile(ctx context.Context, input FileUploadReq) (*UploadSignedUrlRes, error)
 	DownloadFile(ctx context.Context, input string) (*uploaderclient.RequestDownloadUrlRes, error)
+	VerifyAndDecodeToken(ctx context.Context, input VerifyAndDecodeTokenReq) (string, error)
 }
 type service struct {
 	uploaderClient uploaderclient.Client
@@ -25,17 +28,17 @@ func NewService(
 	}
 }
 
-func (ths *service) UploadFile(ctx context.Context, input FileUploadReq) (string, error) {
+func (ths *service) UploadFile(ctx context.Context, input FileUploadReq) (*UploadSignedUrlRes, error) {
 	//UNCOMMENT FOR TESTING FILE
-	// file, _ := os.Open("/Users/keziaaurelia/Downloads/download.jpeg")
-	// defer file.Close()
+	file, _ := os.Open("/Users/keziaaurelia/Downloads/download.jpeg")
+	defer file.Close()
 
-	// // Get the file size
-	// stat, _ := file.Stat()
+	// Get the file size
+	stat, _ := file.Stat()
 
-	// // Read the file into a byte slice
-	// bs := make([]byte, stat.Size())
-	// _, _ = bufio.NewReader(file).Read(bs)
+	// Read the file into a byte slice
+	bs := make([]byte, stat.Size())
+	_, _ = bufio.NewReader(file).Read(bs)
 	mapUploadSignedUrlReq := make(map[string][]uploaderclient.RequestUploadSignedUrlReq)
 	for _, req := range input.UploadSignedUrlReq {
 		requestUploadSignedUrlReq := uploaderclient.RequestUploadSignedUrlReq{
@@ -59,7 +62,7 @@ func (ths *service) UploadFile(ctx context.Context, input FileUploadReq) (string
 			requestUploadSignedUrlReq.DocumentMetadata = &documentMetadata
 		case BULK_ACTION:
 			if req.ContentType != XLSX_CONTENT_TYPE {
-				return "", errors.New("invalid content type")
+				return nil, errors.New("invalid content type")
 			}
 			documentMetadata := VALIDATION_DOCUMENT_METADATA[input.Type]
 			documentMetadata.ContentType = req.ContentType
@@ -74,24 +77,23 @@ func (ths *service) UploadFile(ctx context.Context, input FileUploadReq) (string
 			req,
 		)
 		if err != nil {
-			return "", tracerr.Wrap(err)
+			return nil, tracerr.Wrap(err)
 		}
 		uploadURL = append(uploadURL, resp...)
 	}
+	return &UploadSignedUrlRes{
+		SignedURL: uploadURL[0].SignedUrl,
+		JWTToken:  uploadURL[0].JWTToken,
+	}, nil
+}
 
-	fileID, err := ths.uploaderClient.VerifyAndDecodeToken(uploadURL[0].JWTToken)
-	if err != nil {
-		return "", tracerr.Wrap(err)
-	}
-	//UNCOMMENT TO TESTING FILE
-	// err = ths.uploaderClient.UploadFile(commonutils.ReqIDFromContext(ctx), bs, uploadURL[0].SignedUrl)
-	err = ths.uploaderClient.UploadFile(commonutils.ReqIDFromContext(ctx), input.UploadSignedUrlReq[0].DocumentByte, uploadURL[0].SignedUrl)
+func (ths *service) VerifyAndDecodeToken(ctx context.Context, input VerifyAndDecodeTokenReq) (string, error) {
+	fileID, err := ths.uploaderClient.VerifyAndDecodeToken(input.Token)
 	if err != nil {
 		return "", tracerr.Wrap(err)
 	}
 	return fileID, nil
 }
-
 func (ths *service) DownloadFile(ctx context.Context, input string) (*uploaderclient.RequestDownloadUrlRes, error) {
 	tmp := []string{}
 	tmp = append(tmp, input)
