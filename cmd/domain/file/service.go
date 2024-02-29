@@ -3,8 +3,11 @@ package file
 import (
 	"bufio"
 	"context"
+<<<<<<< HEAD
+=======
 	"errors"
 	"os"
+>>>>>>> d2be88b80114dd4fa4ce22da532f44066c1b73ca
 
 	uploaderclient "github.com/DomZippilli/gcs-proxy-cloud-function/backends/clients/uploader-client"
 	"github.com/DomZippilli/gcs-proxy-cloud-function/backends/shared-libs/go/commonutils"
@@ -47,24 +50,16 @@ func (ths *service) UploadFile(ctx context.Context, input FileUploadReq) (*Uploa
 			IsPublic:   req.IsPublic,
 		}
 
-		switch input.Type {
-		case IMAGE:
-			imageMetadata := VALIDATION_IMAGE_METADATA[input.Type]
+		if input.UploadSignedUrlReq[0].ContentType == IMAGE_JPEG || input.UploadSignedUrlReq[0].ContentType == IMAGE_JPG || input.UploadSignedUrlReq[0].ContentType == IMAGE_PNG {
+			imageMetadata := VALIDATION_IMAGE_METADATA[IMAGE]
 			imageMetadata.ContentType = req.ContentType
 			requestUploadSignedUrlReq.ImageMetadata = &imageMetadata
-		case VIDEO:
-			videoMetadata := VALIDATION_VIDEO_METADATA[input.Type]
+		} else if input.UploadSignedUrlReq[0].ContentType == VIDEO_MOV || input.UploadSignedUrlReq[0].ContentType == VIDEO_MP4 {
+			videoMetadata := VALIDATION_VIDEO_METADATA[VIDEO]
 			videoMetadata.ContentType = req.ContentType
 			requestUploadSignedUrlReq.VideoMetadata = &videoMetadata
-		case DOCUMENT:
-			documentMetadata := VALIDATION_DOCUMENT_METADATA[input.Type]
-			documentMetadata.ContentType = req.ContentType
-			requestUploadSignedUrlReq.DocumentMetadata = &documentMetadata
-		case BULK_ACTION:
-			if req.ContentType != XLSX_CONTENT_TYPE {
-				return nil, errors.New("invalid content type")
-			}
-			documentMetadata := VALIDATION_DOCUMENT_METADATA[input.Type]
+		} else if input.UploadSignedUrlReq[0].ContentType == DOCUMENT_PDF {
+			documentMetadata := VALIDATION_DOCUMENT_METADATA[DOCUMENT]
 			documentMetadata.ContentType = req.ContentType
 			requestUploadSignedUrlReq.DocumentMetadata = &documentMetadata
 		}
