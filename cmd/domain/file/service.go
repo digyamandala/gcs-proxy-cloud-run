@@ -1,7 +1,13 @@
 package file
 
 import (
+	"bufio"
 	"context"
+<<<<<<< HEAD
+=======
+	"errors"
+	"os"
+>>>>>>> d2be88b80114dd4fa4ce22da532f44066c1b73ca
 
 	uploaderclient "github.com/DomZippilli/gcs-proxy-cloud-function/backends/clients/uploader-client"
 	"github.com/DomZippilli/gcs-proxy-cloud-function/backends/shared-libs/go/commonutils"
@@ -27,15 +33,15 @@ func NewService(
 
 func (ths *service) UploadFile(ctx context.Context, input FileUploadReq) (*UploadSignedUrlRes, error) {
 	//UNCOMMENT FOR TESTING FILE
-	// file, _ := os.Open("/Users/keziaaurelia/Downloads/download.jpeg")
-	// defer file.Close()
+	file, _ := os.Open("/Users/keziaaurelia/Downloads/download.jpeg")
+	defer file.Close()
 
-	// // Get the file size
-	// stat, _ := file.Stat()
+	// Get the file size
+	stat, _ := file.Stat()
 
-	// // Read the file into a byte slice
-	// bs := make([]byte, stat.Size())
-	// _, _ = bufio.NewReader(file).Read(bs)
+	// Read the file into a byte slice
+	bs := make([]byte, stat.Size())
+	_, _ = bufio.NewReader(file).Read(bs)
 	mapUploadSignedUrlReq := make(map[string][]uploaderclient.RequestUploadSignedUrlReq)
 	for _, req := range input.UploadSignedUrlReq {
 		requestUploadSignedUrlReq := uploaderclient.RequestUploadSignedUrlReq{
