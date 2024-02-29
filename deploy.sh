@@ -51,7 +51,7 @@ if [[ "${BUCKET_NAME}" == *help ]] || [[ "${BUCKET_NAME}" == "-h" ]]; then
     exit
 fi
 
-gcloud run deploy "${SERVICE_NAME}" \
+gcloud run deploy "gcs-spse-proxy" \
     --project "${PROJECT}" \
     --region "${REGION}" \
     --image "${IMAGE_NAME}" \
@@ -59,10 +59,10 @@ gcloud run deploy "${SERVICE_NAME}" \
     --cpu=2 \
     --memory=512Mi \
     --concurrency=100 \
-    --max-instances=100 \
+    --max-instances=2 \
     --timeout=300s \
     --platform managed \
     --allow-unauthenticated \
-    --ingress=all
+    --ingress=internal-and-cloud-load-balancing
 
 echo Service deployed.
