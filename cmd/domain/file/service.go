@@ -3,11 +3,7 @@ package file
 import (
 	"bufio"
 	"context"
-<<<<<<< HEAD
-=======
-	"errors"
 	"os"
->>>>>>> d2be88b80114dd4fa4ce22da532f44066c1b73ca
 
 	uploaderclient "github.com/DomZippilli/gcs-proxy-cloud-function/backends/clients/uploader-client"
 	"github.com/DomZippilli/gcs-proxy-cloud-function/backends/shared-libs/go/commonutils"
