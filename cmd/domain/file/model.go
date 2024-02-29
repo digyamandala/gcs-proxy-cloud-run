@@ -8,10 +8,16 @@ const (
 	VIDEO             = "VIDEO"
 	DOCUMENT          = "DOCUMENT"
 	XLSX_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+	SHEET             = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+	IMAGE_JPG         = "image/jpg"
+	IMAGE_JPEG        = "image/jpeg"
+	IMAGE_PNG         = "image/png"
+	VIDEO_MP4         = "video/mp4"
+	VIDEO_MOV         = "video/mov"
+	DOCUMENT_PDF      = "application/pdf"
 )
 
 type FileUploadReq struct {
-	Type               string               `json:"type" validate:"required,oneof=BULK_ACTION IMAGE VIDEO DOCUMENT"`
 	UploadSignedUrlReq []UploadSignedUrlReq `json:"uploadSignedUrlReq" validation:"dive"`
 }
 
