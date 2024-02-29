@@ -11,6 +11,7 @@ import (
 )
 
 type Handler interface {
+	HealthCheck(w http.ResponseWriter, req *http.Request)
 	UploadFile(w http.ResponseWriter, req *http.Request)
 	DownloadFile(w http.ResponseWriter, req *http.Request)
 	VerifyAndDecodeToken(w http.ResponseWriter, req *http.Request)
@@ -24,6 +25,10 @@ func NewHandler(svc Service) Handler {
 	return &handler{
 		svc: svc,
 	}
+}
+
+func (ths *handler) HealthCheck(w http.ResponseWriter, req *http.Request) {
+	respond.Success(w, "HEALTHY", http.StatusOK)
 }
 
 func (ths *handler) UploadFile(w http.ResponseWriter, req *http.Request) {

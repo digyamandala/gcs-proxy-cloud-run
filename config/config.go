@@ -15,6 +15,7 @@ package config
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"strings"
 
@@ -31,6 +32,13 @@ func Setup() error {
 // GET will be called in main.go for GET requests
 func GET(ctx context.Context, output http.ResponseWriter, input *http.Request) {
 	log.Info().Msgf("GET triggered with path: %q", input.URL.Path)
+
+	requestHeadersJson, err := json.Marshal(input.Header)
+	if err != nil {
+		log.Error().Msgf("ERROR parsing header to json")
+	}
+	log.Info().Msgf("request header: %q", string(requestHeadersJson))
+	
 	if strings.Contains(input.URL.Path, "public") {
 		gcs.Read(ctx, output, input, LoggingOnly)
 	} else {
@@ -45,9 +53,6 @@ func HEAD(ctx context.Context, output http.ResponseWriter, input *http.Request) 
 }
 
 // func POST
-func POST(ctx context.Context, output http.ResponseWriter, input *http.Request) {
-	gcs.UploadFile(ctx, output, input, LoggingOnly)
-}
 
 // func DELETE
 

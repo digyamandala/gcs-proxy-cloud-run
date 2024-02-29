@@ -16,6 +16,7 @@ type Handler struct {
 
 func SetupRouter(r *chi.Mux, handler Handler) {
 	middlewares := alice.New(middleware.Recoverer)
+	r.Method(http.MethodGet, "/healthcheck", middlewares.ThenFunc(handler.FileHandler.HealthCheck))
 	r.Method(http.MethodPost, "/upload", middlewares.ThenFunc(handler.FileHandler.UploadFile))
 	r.Method(http.MethodGet, "/download/{id}", middlewares.ThenFunc(handler.FileHandler.DownloadFile))
 	r.Method(http.MethodPost, "/decodeToken", middlewares.ThenFunc(handler.FileHandler.VerifyAndDecodeToken))
