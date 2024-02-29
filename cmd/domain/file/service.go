@@ -47,15 +47,15 @@ func (ths *service) UploadFile(ctx context.Context, input FileUploadReq) (*Uploa
 		}
 
 		if input.UploadSignedUrlReq[0].ContentType == IMAGE_JPEG || input.UploadSignedUrlReq[0].ContentType == IMAGE_JPG || input.UploadSignedUrlReq[0].ContentType == IMAGE_PNG {
-			imageMetadata := VALIDATION_IMAGE_METADATA[input.Type]
+			imageMetadata := VALIDATION_IMAGE_METADATA[IMAGE]
 			imageMetadata.ContentType = req.ContentType
 			requestUploadSignedUrlReq.ImageMetadata = &imageMetadata
 		} else if input.UploadSignedUrlReq[0].ContentType == VIDEO_MOV || input.UploadSignedUrlReq[0].ContentType == VIDEO_MP4 {
-			videoMetadata := VALIDATION_VIDEO_METADATA[input.Type]
+			videoMetadata := VALIDATION_VIDEO_METADATA[VIDEO]
 			videoMetadata.ContentType = req.ContentType
 			requestUploadSignedUrlReq.VideoMetadata = &videoMetadata
 		} else if input.UploadSignedUrlReq[0].ContentType == DOCUMENT_PDF {
-			documentMetadata := VALIDATION_DOCUMENT_METADATA[input.Type]
+			documentMetadata := VALIDATION_DOCUMENT_METADATA[DOCUMENT]
 			documentMetadata.ContentType = req.ContentType
 			requestUploadSignedUrlReq.DocumentMetadata = &documentMetadata
 		}
