@@ -79,7 +79,7 @@ func (ths *service) UploadFile(ctx context.Context, input FileUploadReq) (*Uploa
 	}
 	return &UploadSignedUrlRes{
 		SignedURL: uploadURL[0].SignedUrl,
-		Token:     fileID,
+		FileID:    fileID,
 	}, nil
 }
 
