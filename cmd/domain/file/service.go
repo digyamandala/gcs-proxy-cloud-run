@@ -72,9 +72,14 @@ func (ths *service) UploadFile(ctx context.Context, input FileUploadReq) (*Uploa
 		}
 		uploadURL = append(uploadURL, resp...)
 	}
+
+	fileID, err := ths.uploaderClient.VerifyAndDecodeToken(uploadURL[0].JWTToken)
+	if err != nil {
+		return nil, tracerr.Wrap(err)
+	}
 	return &UploadSignedUrlRes{
 		SignedURL: uploadURL[0].SignedUrl,
-		JWTToken:  uploadURL[0].JWTToken,
+		FileID:    fileID,
 	}, nil
 }
 
@@ -94,4 +99,3 @@ func (ths *service) DownloadFile(ctx context.Context, input string) (*uploadercl
 	})
 	return &file[0], nil
 }
-

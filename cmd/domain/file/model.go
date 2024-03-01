@@ -42,7 +42,7 @@ type UploadSignedUrlReq struct {
 }
 type UploadSignedUrlRes struct {
 	SignedURL string `json:"signedUrl"`
-	JWTToken  string `json:"jwtToken"`
+	FileID    string `json:"fileId"`
 }
 
 type VerifyAndDecodeTokenReq struct {
