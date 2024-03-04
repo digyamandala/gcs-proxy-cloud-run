@@ -15,6 +15,7 @@ type Handler interface {
 	UploadFile(w http.ResponseWriter, req *http.Request)
 	DownloadFile(w http.ResponseWriter, req *http.Request)
 	VerifyAndDecodeToken(w http.ResponseWriter, req *http.Request)
+	UploadStatus(w http.ResponseWriter, req *http.Request)
 }
 
 type handler struct {
@@ -48,6 +49,7 @@ func (ths *handler) UploadFile(w http.ResponseWriter, req *http.Request) {
 	}
 	respond.Success(w, res, http.StatusOK)
 }
+
 func (ths *handler) VerifyAndDecodeToken(w http.ResponseWriter, req *http.Request) {
 	var input VerifyAndDecodeTokenReq
 	err := json.NewDecoder(req.Body).Decode(&input)
@@ -80,4 +82,22 @@ func (ths *handler) DownloadFile(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	respond.Success(w, res, http.StatusOK)
+}
+
+func (ths *handler) UploadStatus(w http.ResponseWriter, req *http.Request) {
+	var input UploadStatusReq
+	err := json.NewDecoder(req.Body).Decode(&input)
+	if err != nil {
+		logger.Warn(req.Context(), "%v", err)
+		respond.Error(w, req.Context(), apierror.WithDesc(apierror.CodeInvalidRequest, "Invalid request"), http.StatusBadRequest)
+		return
+	}
+	err = ths.svc.UploadStatus(req.Context(), input)
+
+	if err != nil {
+		logger.Warn(req.Context(), "%v", err)
+		respond.Error(w, req.Context(), apierror.WithDesc(apierror.CodeInternalServerError, "Internal Server Error"), http.StatusBadRequest)
+		return
+	}
+	respond.Success(w, nil, http.StatusOK)
 }

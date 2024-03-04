@@ -48,6 +48,9 @@ type UploadSignedUrlRes struct {
 type VerifyAndDecodeTokenReq struct {
 	Token string `json:"token"`
 }
+type UploadStatusReq struct {
+	Tokens []string `json:"tokens"`
+}
 
 type RequestDownloadUrlReq struct {
 	Token    []string

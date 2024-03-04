@@ -27,6 +27,9 @@ type RequestUploadSignedUrlReq struct {
 	Project          Project           `json:"project"`
 }
 
+type UploadStatusReq struct {
+	Tokens []string `json:"tokens"`
+}
 type RequestUploadSignedUrlRes struct {
 	Identifier string `json:"identifier"`
 	SignedUrl  string `json:"signedUrl"`
