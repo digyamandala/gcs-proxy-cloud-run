@@ -21,6 +21,7 @@ type Client interface {
 	VerifyAndDecodeToken(token string) (string, error)
 	RequestDownloadUrlWithWait(ctx context.Context, reqID string, req RequestDownloadUrlReq) ([]RequestDownloadUrlRes, error)
 	UploadFile(reqID string, file interface{}, signedUrl string) error
+	UploadStatus(reqID string, req UploadStatusReq) error
 }
 
 type client struct {
@@ -89,6 +90,32 @@ func (c *client) RequestUploadSignedUrl(reqID string, req []RequestUploadSignedU
 	}
 
 	return *model.Data, nil
+}
+
+func (c *client) UploadStatus(reqID string, req UploadStatusReq) (err error) {
+	url := fmt.Sprintf("%s/upload/check", c.baseURL)
+	resp, err := c.restyClient.R().
+		SetBody(req).
+		SetHeader("Content-Type", "application/json").
+		SetHeader("Request-ID", reqID).
+		Post(url)
+	if err != nil {
+		err = fmt.Errorf("error when doing checking status upload: %w", err)
+		return
+	}
+
+	if resp.IsError() {
+		var errorModel ErrorAPIModel
+		err = json.Unmarshal(resp.Body(), &errorModel)
+		if err != nil {
+			return
+		}
+
+		err = apierror.WithDesc(errorModel.Errors[0].Code, errorModel.Errors[0].Message)
+		return
+	}
+
+	return nil
 }
 
 func (c *client) RequestDownloadUrl(reqID string, req RequestDownloadUrlReq) (res []RequestDownloadUrlRes, err error) {

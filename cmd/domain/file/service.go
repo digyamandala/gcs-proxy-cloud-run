@@ -12,6 +12,7 @@ type Service interface {
 	UploadFile(ctx context.Context, input FileUploadReq) (*UploadSignedUrlRes, error)
 	DownloadFile(ctx context.Context, input string) (*uploaderclient.RequestDownloadUrlRes, error)
 	VerifyAndDecodeToken(ctx context.Context, input VerifyAndDecodeTokenReq) (string, error)
+	UploadStatus(ctx context.Context, input UploadStatusReq) error
 }
 type service struct {
 	uploaderClient uploaderclient.Client
@@ -96,4 +97,11 @@ func (ths *service) DownloadFile(ctx context.Context, input string) (*uploadercl
 		ExpiryInSecond: 10000,
 	})
 	return &file[0], nil
+}
+
+func (ths *service) UploadStatus(ctx context.Context, input UploadStatusReq) error {
+	err := ths.uploaderClient.UploadStatus(commonutils.ReqIDFromContext(ctx), uploaderclient.UploadStatusReq{
+		Tokens: input.Tokens,
+	})
+	return err
 }
