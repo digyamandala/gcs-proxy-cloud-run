@@ -3,11 +3,13 @@ package file
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/DomZippilli/gcs-proxy-cloud-function/backends/shared-libs/go/apierror"
 	"github.com/DomZippilli/gcs-proxy-cloud-function/backends/shared-libs/go/logger"
 	"github.com/DomZippilli/gcs-proxy-cloud-function/backends/shared-libs/go/respond"
 	"github.com/go-chi/chi/v5"
+	"github.com/rs/zerolog/log"
 )
 
 type Handler interface {
@@ -81,6 +83,13 @@ func (ths *handler) DownloadFile(w http.ResponseWriter, req *http.Request) {
 		logger.Warn(req.Context(), "%v", err)
 		respond.Error(w, req.Context(), apierror.WithDesc(apierror.CodeInternalServerError, "Internal Server Error"), http.StatusBadRequest)
 		return
+	}
+	if strings.Compare(res.SignedUrl, "") != 0 {
+		log.Info().Msgf("Download fileID %s will be redirected to signedUrl %s", id, res.SignedUrl)
+		http.Redirect(w, req, res.SignedUrl, http.StatusMovedPermanently)
+	} else {
+		log.Info().Msgf("Download fileID %s will be redirected to publicUrl %s", id, res.PublicUrl)
+		http.Redirect(w, req, res.PublicUrl, http.StatusMovedPermanently)
 	}
 	respond.Success(w, res, http.StatusOK)
 }

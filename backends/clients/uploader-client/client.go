@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/DomZippilli/gcs-proxy-cloud-function/backends/shared-libs/go/apierror"
 	"github.com/DomZippilli/gcs-proxy-cloud-function/backends/shared-libs/go/logger"
@@ -31,7 +32,8 @@ type client struct {
 }
 
 func NewClient(baseURL string, publicKey []byte) (*client, error) {
-	restyClient := resty.New()
+	timeout := 15 * time.Second
+	restyClient := resty.New().SetTimeout(timeout)
 	restyClient.OnAfterResponse(func(rc *resty.Client, resp *resty.Response) error {
 		if resp.IsError() {
 			req := resp.Request
