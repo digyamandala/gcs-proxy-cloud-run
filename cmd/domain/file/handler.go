@@ -40,6 +40,7 @@ func (ths *handler) UploadFile(w http.ResponseWriter, req *http.Request) {
 		respond.Error(w, req.Context(), apierror.WithDesc(apierror.CodeInvalidRequest, "Invalid request"), http.StatusBadRequest)
 		return
 	}
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	res, err := ths.svc.UploadFile(req.Context(), input)
 
 	if err != nil {
