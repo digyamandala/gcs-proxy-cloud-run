@@ -32,6 +32,7 @@ func NewHandler(svc Service) Handler {
 
 func enableCors(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Methods", "OPTIONS, HEAD, GET, POST")
 }
 func (ths *handler) HealthCheck(w http.ResponseWriter, req *http.Request) {
 	respond.Success(w, "HEALTHY", http.StatusOK)
