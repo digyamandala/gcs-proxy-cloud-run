@@ -30,16 +30,11 @@ func NewHandler(svc Service) Handler {
 	}
 }
 
-func enableCors(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-	(*w).Header().Set("Access-Control-Allow-Methods", "OPTIONS, HEAD, GET, POST")
-}
 func (ths *handler) HealthCheck(w http.ResponseWriter, req *http.Request) {
 	respond.Success(w, "HEALTHY", http.StatusOK)
 }
 
 func (ths *handler) UploadFile(w http.ResponseWriter, req *http.Request) {
-	enableCors(&w)
 	var input FileUploadReq
 	err := json.NewDecoder(req.Body).Decode(&input)
 	if err != nil {
@@ -59,7 +54,6 @@ func (ths *handler) UploadFile(w http.ResponseWriter, req *http.Request) {
 }
 
 func (ths *handler) VerifyAndDecodeToken(w http.ResponseWriter, req *http.Request) {
-	enableCors(&w)
 	var input VerifyAndDecodeTokenReq
 	err := json.NewDecoder(req.Body).Decode(&input)
 	if err != nil {
@@ -78,7 +72,6 @@ func (ths *handler) VerifyAndDecodeToken(w http.ResponseWriter, req *http.Reques
 }
 
 func (ths *handler) DownloadFile(w http.ResponseWriter, req *http.Request) {
-	enableCors(&w)
 	id := chi.URLParam(req, "id")
 	if id == "" {
 		respond.Error(w, req.Context(), apierror.WithDesc(apierror.CodeInvalidRequest, "Invalid request"), http.StatusBadRequest)
@@ -102,7 +95,6 @@ func (ths *handler) DownloadFile(w http.ResponseWriter, req *http.Request) {
 }
 
 func (ths *handler) UploadStatus(w http.ResponseWriter, req *http.Request) {
-	enableCors(&w)
 	var input UploadStatusReq
 	err := json.NewDecoder(req.Body).Decode(&input)
 	if err != nil {
