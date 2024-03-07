@@ -51,7 +51,7 @@ if [[ "${BUCKET_NAME}" == *help ]] || [[ "${BUCKET_NAME}" == "-h" ]]; then
     exit
 fi
 
-gcloud run deploy "gcs-spse-proxy" \
+gcloud run deploy "gcs-spse-dev-bucket" \
     --project "${PROJECT}" \
     --region "${REGION}" \
     --image "${IMAGE_NAME}" \
