@@ -29,8 +29,8 @@ func SetupRouter(r *chi.Mux, handler Handler) {
 	r.Method(http.MethodGet, "/healthcheck", middlewares.ThenFunc(handler.FileHandler.HealthCheck))
 	r.Method(http.MethodGet, "/download/{id}", middlewares.ThenFunc(handler.FileHandler.DownloadFile))
 	r.Method(http.MethodPost, "/upload", middlewares.ThenFunc(handler.FileHandler.UploadFile))
-	r.Method(http.MethodOptions, "/upload", middlewares.ThenFunc(handler.FileHandler.OptionUpload))
 	r.Method(http.MethodPost, "/decodeToken", middlewares.ThenFunc(handler.FileHandler.VerifyAndDecodeToken))
 	r.Method(http.MethodPost, "/upload/check", middlewares.ThenFunc(handler.FileHandler.UploadStatus))
+	r.Method(http.MethodOptions, "/*", middlewares.ThenFunc(handler.FileHandler.HandlingOption))
 	r.Method(http.MethodGet, "/*", handler.H2cHandler)
 }

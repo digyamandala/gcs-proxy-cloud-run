@@ -18,7 +18,7 @@ type Handler interface {
 	DownloadFile(w http.ResponseWriter, req *http.Request)
 	VerifyAndDecodeToken(w http.ResponseWriter, req *http.Request)
 	UploadStatus(w http.ResponseWriter, req *http.Request)
-	OptionUpload(w http.ResponseWriter, req *http.Request)
+	HandlingOption(w http.ResponseWriter, req *http.Request)
 }
 
 type handler struct {
@@ -117,7 +117,7 @@ func (ths *handler) UploadStatus(w http.ResponseWriter, req *http.Request) {
 	respond.Success(w, nil, http.StatusOK)
 }
 
-func (ths *handler) OptionUpload(w http.ResponseWriter, req *http.Request) {
+func (ths *handler) HandlingOption(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Accept, Authorization, Content-Type, X-CSRF-Token")
