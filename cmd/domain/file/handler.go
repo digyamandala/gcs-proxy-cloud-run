@@ -18,6 +18,7 @@ type Handler interface {
 	DownloadFile(w http.ResponseWriter, req *http.Request)
 	VerifyAndDecodeToken(w http.ResponseWriter, req *http.Request)
 	UploadStatus(w http.ResponseWriter, req *http.Request)
+	OptionUpload(w http.ResponseWriter, req *http.Request)
 }
 
 type handler struct {
@@ -43,6 +44,10 @@ func (ths *handler) UploadFile(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept, Authorization, Content-Type, X-CSRF-Token")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+
 	res, err := ths.svc.UploadFile(req.Context(), input)
 
 	if err != nil {
@@ -110,4 +115,12 @@ func (ths *handler) UploadStatus(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	respond.Success(w, nil, http.StatusOK)
+}
+
+func (ths *handler) OptionUpload(w http.ResponseWriter, req *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept, Authorization, Content-Type, X-CSRF-Token")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	respond.Success(w, true, http.StatusOK)
 }
