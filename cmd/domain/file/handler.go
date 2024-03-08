@@ -114,6 +114,10 @@ func (ths *handler) UploadStatus(w http.ResponseWriter, req *http.Request) {
 		respond.Error(w, req.Context(), apierror.FromError(err), http.StatusBadRequest)
 		return
 	}
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Accept, Authorization, Content-Type, X-CSRF-Token")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	respond.Success(w, nil, http.StatusOK)
 }
 
