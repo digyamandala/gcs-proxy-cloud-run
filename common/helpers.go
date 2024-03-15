@@ -18,6 +18,8 @@ import (
 	"io"
 	"net/http"
 	"strings"
+
+	"github.com/rs/zerolog/log"
 )
 
 // NormalizePath:
@@ -31,6 +33,7 @@ func NormalizePath(prefix string, path string) (object string) {
 
 	//TODO: CONFIGURIZE THE PREFIX AND CHANGE THE PREFIX
 	result := prefix + "/" + strings.TrimLeft(path, "/")
+	log.Info().Msgf("normalized path: %s", result)
 	return result
 }
 
