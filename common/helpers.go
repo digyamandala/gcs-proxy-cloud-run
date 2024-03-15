@@ -19,6 +19,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/agrison/go-commons-lang/stringUtils"
 	"github.com/rs/zerolog/log"
 )
 
@@ -32,6 +33,9 @@ func NormalizePath(prefix string, path string) (object string) {
 	}
 
 	//TODO: CONFIGURIZE THE PREFIX AND CHANGE THE PREFIX
+	if stringUtils.IsEmpty(prefix) {
+		prefix = "121"
+	}
 	result := prefix + "/" + strings.TrimLeft(path, "/")
 	log.Info().Msgf("normalized path: %s", result)
 	return result
