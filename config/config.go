@@ -20,7 +20,6 @@ import (
 	"strings"
 
 	"github.com/DomZippilli/gcs-proxy-cloud-function/backends/gcs"
-	"github.com/DomZippilli/gcs-proxy-cloud-function/backends/proxy"
 	"github.com/rs/zerolog/log"
 )
 
@@ -38,7 +37,7 @@ func GET(ctx context.Context, output http.ResponseWriter, input *http.Request) {
 		log.Error().Msgf("ERROR parsing header to json")
 	}
 	log.Info().Msgf("request header: %q", string(requestHeadersJson))
-	
+
 	if strings.Contains(input.URL.Path, "public") {
 		gcs.Read(ctx, output, input, LoggingOnly)
 	} else {
@@ -57,6 +56,6 @@ func HEAD(ctx context.Context, output http.ResponseWriter, input *http.Request) 
 // func DELETE
 
 // OPTIONS will be called in main.go for OPTIONS requests
-func OPTIONS(ctx context.Context, output http.ResponseWriter, input *http.Request) {
-	proxy.SendOptions(ctx, output, input, LoggingOnly)
-}
+// func OPTIONS(ctx context.Context, output http.ResponseWriter, input *http.Request) {
+// 	proxy.SendOptions(ctx, output, input, LoggingOnly)
+// }
