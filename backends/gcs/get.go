@@ -39,7 +39,7 @@ func Read(ctx context.Context, response http.ResponseWriter,
 
 func ReadWithSignatureURL(ctx context.Context, response http.ResponseWriter,
 	request *http.Request, pipeline filter.Pipeline) {
-	objectName := common.NormalizePath(request.URL.Path)
+	objectName := common.NormalizePath(request.Header.Get("x-lpse-id"), request.URL.Path)
 	opts := &storage.SignedURLOptions{
 		Scheme:  storage.SigningSchemeV4,
 		Method:  "GET",
@@ -70,7 +70,7 @@ func ReadWithCache(ctx context.Context, response http.ResponseWriter,
 	request *http.Request, missPipeline filter.Pipeline, cacheGet CacheGet,
 	hitPipeline filter.Pipeline) {
 	// normalize path
-	objectName := common.NormalizePath(request.URL.Path)
+	objectName := common.NormalizePath(request.Header.Get("x-lpse-id"), request.URL.Path)
 
 	// get the object handle and headers. Headers are always cached and obey
 	// Cache-Control header, so this will not call GCS unless there's a miss.

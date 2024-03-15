@@ -24,14 +24,13 @@ import (
 //
 //	replace trailing slashes with "/index.html";
 //	remove leading slashes.
-func NormalizePath(path string) (object string) {
+func NormalizePath(prefix string, path string) (object string) {
 	if strings.HasSuffix(path, "/") {
 		path = path + "index.html"
 	}
 
 	//TODO: CONFIGURIZE THE PREFIX AND CHANGE THE PREFIX
-	prefix := "121/"
-	result := prefix + strings.TrimLeft(path, "/")
+	result := prefix + "/" + strings.TrimLeft(path, "/")
 	return result
 }
 
