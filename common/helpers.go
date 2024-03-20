@@ -18,20 +18,26 @@ import (
 	"io"
 	"net/http"
 	"strings"
+
+	"github.com/agrison/go-commons-lang/stringUtils"
+	"github.com/rs/zerolog/log"
 )
 
 // NormalizePath:
 //
 //	replace trailing slashes with "/index.html";
 //	remove leading slashes.
-func NormalizePath(path string) (object string) {
+func NormalizePath(prefix string, path string) (object string) {
 	if strings.HasSuffix(path, "/") {
 		path = path + "index.html"
 	}
 
 	//TODO: CONFIGURIZE THE PREFIX AND CHANGE THE PREFIX
-	prefix := "121/"
-	result := prefix + strings.TrimLeft(path, "/")
+	if stringUtils.IsEmpty(prefix) {
+		prefix = "121"
+	}
+	result := prefix + "/" + strings.TrimLeft(path, "/")
+	log.Info().Msgf("normalized path: %s", result)
 	return result
 }
 

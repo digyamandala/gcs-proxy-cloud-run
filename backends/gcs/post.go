@@ -28,7 +28,7 @@ import (
 // Media caching is bypassed.
 func UploadFile(ctx context.Context, response http.ResponseWriter,
 	request *http.Request, pipeline filter.Pipeline) {
-	objectName := common.NormalizePath(request.URL.Path)
+	objectName := common.NormalizePath(request.Header.Get("x-lpse-id"), request.URL.Path)
 	// GENERATE SIGNED_URL
 	opts := &storage.SignedURLOptions{
 		Scheme:  storage.SigningSchemeV4,
