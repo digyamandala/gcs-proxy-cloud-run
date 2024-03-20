@@ -43,6 +43,7 @@ func (ths *service) UploadFile(ctx context.Context, input FileUploadReq) (*Uploa
 			Identifier: req.Identifier,
 			FileName:   req.FileName,
 			IsPublic:   req.IsPublic,
+			Project:    uploaderclient.PROJECT_SPSE,
 		}
 
 		if input.UploadSignedUrlReq[0].ContentType == IMAGE_JPEG || input.UploadSignedUrlReq[0].ContentType == IMAGE_JPG || input.UploadSignedUrlReq[0].ContentType == IMAGE_PNG {
