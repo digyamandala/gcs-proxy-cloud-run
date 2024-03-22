@@ -13,6 +13,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/lestrrat-go/jwx/jwk"
 	"github.com/lestrrat-go/jwx/jwt"
+	"github.com/rs/zerolog/log"
 	"github.com/ztrue/tracerr"
 )
 
@@ -63,6 +64,9 @@ func NewClient(baseURL string, publicKey []byte) (*client, error) {
 
 func (c *client) RequestUploadSignedUrl(reqID string, req []RequestUploadSignedUrlReq) (res []RequestUploadSignedUrlRes, err error) {
 	url := fmt.Sprintf("%s/upload/bulkRequest", c.baseURL)
+	j, _ := json.Marshal(req)
+	log.Info().Msgf("UploadSignedUrl request: %q", j)
+
 	resp, err := c.restyClient.R().
 		SetBody(req).
 		SetResult(&APIModel[[]RequestUploadSignedUrlRes]{}).

@@ -8,6 +8,7 @@ import (
 	"github.com/DomZippilli/gcs-proxy-cloud-function/backends/shared-libs/go/apierror"
 	"github.com/DomZippilli/gcs-proxy-cloud-function/backends/shared-libs/go/logger"
 	"github.com/DomZippilli/gcs-proxy-cloud-function/backends/shared-libs/go/respond"
+	"github.com/DomZippilli/gcs-proxy-cloud-function/common"
 	"github.com/go-chi/chi/v5"
 	"github.com/rs/zerolog/log"
 )
@@ -51,6 +52,13 @@ func (ths *handler) UploadFile(w http.ResponseWriter, req *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Accept, Authorization, Content-Type, X-CSRF-Token")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+	lpseId := req.Header.Get("x-lpse-id")
+	for i := 0; i < len(input.UploadSignedUrlReq); i++ {
+		normalizedPath := common.NormalizePath(lpseId, input.UploadSignedUrlReq[i].FileName)
+		log.Info().Msgf("normalized path %s", normalizedPath)
+		input.UploadSignedUrlReq[i].FileName = normalizedPath
+	}
 
 	res, err := ths.svc.UploadFile(req.Context(), input)
 

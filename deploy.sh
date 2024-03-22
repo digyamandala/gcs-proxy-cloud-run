@@ -57,9 +57,9 @@ gcloud run deploy "gcs-spse-dev-bucket" \
     --image "${IMAGE_NAME}" \
     --set-env-vars BUCKET_NAME="${BUCKET_NAME}" \
     --cpu=2 \
-    --memory=512Mi \
+    --memory=1Gi \
     --concurrency=100 \
-    --max-instances=2 \
+    --max-instances=1 \
     --timeout=300s \
     --platform managed \
     --allow-unauthenticated \
