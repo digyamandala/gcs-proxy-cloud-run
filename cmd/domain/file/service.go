@@ -42,7 +42,7 @@ func (ths *service) UploadFile(ctx context.Context, input FileUploadReq) (*Uploa
 		requestUploadSignedUrlReq := uploaderclient.RequestUploadSignedUrlReq{
 			Identifier: req.Identifier,
 			FileName:   req.FileName,
-			IsPublic:   false,
+			IsPublic:   req.IsPublic,
 			Project:    uploaderclient.PROJECT_SPSE,
 		}
 
