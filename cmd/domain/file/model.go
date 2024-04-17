@@ -15,6 +15,7 @@ const (
 	VIDEO_MP4         = "video/mp4"
 	VIDEO_MOV         = "video/mov"
 	DOCUMENT_PDF      = "application/pdf"
+	DOCUMENT_RHS      = "application/octet-stream"
 )
 
 type FileUploadReq struct {

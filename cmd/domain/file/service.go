@@ -43,6 +43,7 @@ func (ths *service) UploadFile(ctx context.Context, input FileUploadReq) (*Uploa
 			Identifier: req.Identifier,
 			FileName:   req.FileName,
 			IsPublic:   req.IsPublic,
+			Project:    uploaderclient.PROJECT_SPSE,
 		}
 
 		if input.UploadSignedUrlReq[0].ContentType == IMAGE_JPEG || input.UploadSignedUrlReq[0].ContentType == IMAGE_JPG || input.UploadSignedUrlReq[0].ContentType == IMAGE_PNG {
@@ -53,7 +54,7 @@ func (ths *service) UploadFile(ctx context.Context, input FileUploadReq) (*Uploa
 			videoMetadata := VALIDATION_VIDEO_METADATA[VIDEO]
 			videoMetadata.ContentType = req.ContentType
 			requestUploadSignedUrlReq.VideoMetadata = &videoMetadata
-		} else if input.UploadSignedUrlReq[0].ContentType == DOCUMENT_PDF {
+		} else if input.UploadSignedUrlReq[0].ContentType == DOCUMENT_PDF || input.UploadSignedUrlReq[0].ContentType == DOCUMENT_RHS {
 			documentMetadata := VALIDATION_DOCUMENT_METADATA[DOCUMENT]
 			documentMetadata.ContentType = req.ContentType
 			requestUploadSignedUrlReq.DocumentMetadata = &documentMetadata
