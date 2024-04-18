@@ -39,12 +39,15 @@ func Read(ctx context.Context, response http.ResponseWriter,
 
 func ReadWithSignatureURL(ctx context.Context, response http.ResponseWriter,
 	request *http.Request, pipeline filter.Pipeline) {
+	max_age := 6 * 24 * 60 * time.Minute
 	objectName := common.NormalizePath(request.Header.Get("x-lpse-id"), request.URL.Path)
 	opts := &storage.SignedURLOptions{
 		Scheme:  storage.SigningSchemeV4,
 		Method:  "GET",
-		Expires: time.Now().Add(24 * 6 * time.Hour),
+		Expires: time.Now().Add(max_age),
 	}
+	cacheControl := "private, max-age=" + fmt.Sprintf("%.0f", max_age.Seconds())
+	response.Header().Set("Cache-Control", cacheControl)
 	url, signedErr := gcs.Bucket(bucket).SignedURL(objectName, opts)
 	if signedErr != nil {
 		log.Error().Msgf("Bucket(%q).SignedURL: %w", bucket, signedErr)

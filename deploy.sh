@@ -59,6 +59,7 @@ gcloud run deploy "gcs-spse-dev-bucket" \
     --cpu=2 \
     --memory=1Gi \
     --concurrency=100 \
+    --min-instances=1 \
     --max-instances=1 \
     --timeout=300s \
     --platform managed \

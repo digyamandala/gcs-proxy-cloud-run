@@ -2,6 +2,7 @@ package file
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -115,6 +116,7 @@ func (ths *handler) DownloadFile(w http.ResponseWriter, req *http.Request) {
 		log.Info().Msgf("Download fileID %s will be redirected to publicUrl %s", id, res.PublicUrl)
 		http.Redirect(w, req, res.PublicUrl, http.StatusMovedPermanently)
 	}
+	w.Header().Set("Cache-Control", "private, max-age="+fmt.Sprintf("%d", (6*24*60*60)))
 	respond.Success(w, res, http.StatusOK)
 }
 

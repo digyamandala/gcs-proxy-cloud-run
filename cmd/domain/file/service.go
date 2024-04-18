@@ -95,7 +95,7 @@ func (ths *service) DownloadFile(ctx context.Context, input string) (*uploadercl
 	tmp = append(tmp, input)
 	file, _ := ths.uploaderClient.RequestDownloadUrl(commonutils.ReqIDFromContext(ctx), uploaderclient.RequestDownloadUrlReq{
 		Token:          tmp,
-		ExpiryInSecond: 10000,
+		ExpiryInSecond: 6 * 24 * 60 * 60,
 	})
 	return &file[0], nil
 }
