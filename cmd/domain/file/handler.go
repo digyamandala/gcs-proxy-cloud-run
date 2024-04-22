@@ -2,6 +2,7 @@ package file
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/DomZippilli/gcs-proxy-cloud-function/backends/shared-libs/go/logger"
 	"github.com/DomZippilli/gcs-proxy-cloud-function/backends/shared-libs/go/respond"
 	"github.com/DomZippilli/gcs-proxy-cloud-function/common"
+	"github.com/agrison/go-commons-lang/stringUtils"
 	"github.com/go-chi/chi/v5"
 	"github.com/rs/zerolog/log"
 )
@@ -40,6 +42,10 @@ func (ths *handler) HealthCheck(w http.ResponseWriter, req *http.Request) {
 }
 
 func (ths *handler) UploadFile(w http.ResponseWriter, req *http.Request) {
+	if stringUtils.IsEmpty(req.Header.Get("x-lpse-id")) {
+		http.Error(w, "x-lpse-id header not found", http.StatusBadRequest)
+		return
+	}
 	enableCors(&w)
 	var input FileUploadReq
 	err := json.NewDecoder(req.Body).Decode(&input)
@@ -110,6 +116,7 @@ func (ths *handler) DownloadFile(w http.ResponseWriter, req *http.Request) {
 		log.Info().Msgf("Download fileID %s will be redirected to publicUrl %s", id, res.PublicUrl)
 		http.Redirect(w, req, res.PublicUrl, http.StatusMovedPermanently)
 	}
+	w.Header().Set("Cache-Control", "private, max-age="+fmt.Sprintf("%d", (6*24*60*60)))
 	respond.Success(w, res, http.StatusOK)
 }
 

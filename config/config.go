@@ -20,6 +20,7 @@ import (
 	"strings"
 
 	"github.com/DomZippilli/gcs-proxy-cloud-function/backends/gcs"
+	"github.com/agrison/go-commons-lang/stringUtils"
 	"github.com/rs/zerolog/log"
 )
 
@@ -30,6 +31,10 @@ func Setup() error {
 
 // GET will be called in main.go for GET requests
 func GET(ctx context.Context, output http.ResponseWriter, input *http.Request) {
+	if stringUtils.IsEmpty(input.Header.Get("x-lpse-id")) {
+		http.Error(output, "x-lpse-id header not found", http.StatusBadRequest)
+		return
+	}
 	log.Info().Msgf("GET triggered with path: %q", input.URL.Path)
 
 	requestHeadersJson, err := json.Marshal(input.Header)
@@ -38,7 +43,7 @@ func GET(ctx context.Context, output http.ResponseWriter, input *http.Request) {
 	}
 	log.Info().Msgf("request header: %q", string(requestHeadersJson))
 
-	if strings.Contains(input.URL.Path, "public") {
+	if strings.Contains(input.URL.Path, "/public/") {
 		gcs.Read(ctx, output, input, LoggingOnly)
 	} else {
 		gcs.ReadWithSignatureURL(ctx, output, input, LoggingOnly)
